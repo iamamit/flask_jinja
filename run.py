@@ -27,8 +27,22 @@ def register():
             
     return render_template('register.html')
 
-@app.route('/login')
+@app.route('/login',methods=['GET','POST'])
 def login():
+    if request.method == "POST":
+        
+        username=request.form.get('username')
+        password=request.form.get('password')
+        
+
+        
+        data=db.execute("select * from users where username= :username",{"username":username}).fetchone()
+        db.commit()
+        
+        if password==data[3]:
+            return render_template('userlist.html')
+        
+            
     return render_template('login.html')
 
 if __name__ == "__main__":
