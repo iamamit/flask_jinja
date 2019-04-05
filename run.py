@@ -17,11 +17,12 @@ def register():
     if request.method == "POST":
         name=request.form.get('name')
         username=request.form.get('username')
+        role=request.form.get('role')
         password=request.form.get('password')
         confirm=request.form.get('confirm')
 
         if password==confirm:
-            db.execute("insert into users(name,username,password) values(:name,:username,:password)",{"name":name,"username":username,"password":password})
+            db.execute("insert into users(name,username,role,password) values(:name,:username,:role,:password)",{"name":name,"username":username,"role":role,"password":password})
             db.commit()
             return redirect(url_for('login'))
             
@@ -40,10 +41,18 @@ def login():
         db.commit()
         
         if password==data[3]:
-            return render_template('userlist.html')
+            
+            return redirect(url_for('userlist'))
         
             
     return render_template('login.html')
+
+@app.route('/users')
+def userlist():
+    userlist=db.execute("select * from users")
+    db.commit()
+    
+    return render_template('userlist.html',userlist=userlist)
 
 if __name__ == "__main__":
     app.run(debug=True)
